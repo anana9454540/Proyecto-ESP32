@@ -1,2 +1,106 @@
-<DOCTYPE.index>  aaaa  </DOCTYPE.index>
-codigo
+<DOCTYPE.index>   
+<h1></h1>codigo para ARDUINO</h1>
+<h3>el siguiente codigo para Arduino demuestra como crear un reloj inteligente que muestre la hora, la fecha y el clima con el microcontrolador Espressif ESP32:</h3>
+  
+<h6>  #include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET 4
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.display();
+}
+
+void loop() {
+  HTTPClient http;
+  http.begin("https://api.openweathermap.org/data/2.5/weather?q=Buenos+Aires,ar&appid=YOUR_API_KEY");
+  int httpCode = http.GET();
+
+  if (httpCode == 200) {
+    String payload = http.getString();
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, payload);
+
+    const char* weather = doc["weather"][0]["main"].as<const char*>();
+    int temperature = doc["main"]["temp"].as<int>();
+    int humidity = doc["main"]["humidity"].as<int>();
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print(hour());
+    display.print(":");
+    display.print(minute());
+    display.print(":");
+    display.print(second());
+    display.setCursor(0, 10);
+    display.print(day());
+    display.print("-");
+    display.print(month());
+    display.print("-");
+    display.print(year());
+    display.setCursor(0, 20);
+    display.print(weather);
+    display.setCursor(0, 30);
+    display.print(temperature);
+    display.print("°C");
+    display.setCursor(0, 40);
+    display.print(humidity);
+    display.print("%");
+    display.display();
+  } else {
+    Serial.println("HTTP error code: " + String(httpCode));
+  }
+  http.end();
+
+  delay(60000); 
+} </h6>
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</DOCTYPE.index>
+
