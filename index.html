@@ -1,12 +1,52 @@
 <!DOCTtype html>
-<nav>
-  <ul>
-    <li><a href="#">Inicio</a></li>
-    <li><a href="#">Acerca de</a></li>
-    <li><a href="#">Contacto</a></li>
-  </ul>
-</nav>
-inicio.html
+HTML
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Barra de menú</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Acerca de</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </nav>
+  <script src="script.js"></script>
+</body>
+</html>
+Utiliza el código con precaución. Más información
+CSS
+nav {
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  margin: 0;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: inline-block;
+}
+
+a {
+  text-decoration: none;
+}
+Utiliza el código con precaución. Más información
+JavaScript
+// Abrir el menú al hacer clic en un elemento de la barra de menú
+document.querySelectorAll("nav ul li a").forEach(function(element) {
+  element.addEventListener("click", function() {
+    document.querySelector("nav ul").classList.toggle("open");
+  });
+});
 <h1> Microcontrolador Espressif ESP32 </h1>
 
 
@@ -57,5 +97,4 @@ Fácil de programar </h6>
 El soporte de software puede ser limitado para algunas funciones
 En general, el ESP32 es un microcontrolador versátil y potente que es ideal para una amplia gama de aplicaciones. </h6>
                                                                       
-<contact.html>
-hola mi amor
+
