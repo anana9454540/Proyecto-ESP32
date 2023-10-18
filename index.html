@@ -1,23 +1,46 @@
 <!DOCTtype html>
-<header>
-    <nav label="Principal" data-offset="true">
-        <menu>
-            <menuitem label="Presentación" data-page="pag-inicio"></menuitem>
-        </menu>
-    </nav>
-    <nav label="Secundario">
-        <menu>
-            <menuitem data-page="pag-ayuda"><img ="content/ayuda.png" /></menuitem>
-        </menu>
-    </nav>
-</header>
-header nav:nth-child(1) {
-  float: left;
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Barra de navegación</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#">Espressif ESP32</a></li>
+      <li><a href="#">códigos IDE</a></li>
+      <li><a href="#">tinkercad</a></li>
+    </ul>
+  </nav>
+  <script src="script.js"></script>
+</body>
+</html>
+nav {
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  margin: 0;
 }
 
-header nav:nth-child(2) {
-  float: right;
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
+
+li {
+  display: inline-block;
+}
+
+a {
+  text-decoration: none;
+}
+document.querySelectorAll("nav ul li a").forEach(function(element) {
+  element.addEventListener("click", function() {
+    document.querySelector("nav ul").classList.toggle("open");
+  });
+});
 
 <h3> ¿que es?</h3>
 <h6> El ESP32 es un microcontrolador de 32 bits desarrollado por Espressif Systems. Tiene un procesador dual-core Tensilica Xtensa LX6 con una frecuencia de reloj de hasta 240 MHz, 520 KB de memoria SRAM y 448 KB de memoria ROM.
