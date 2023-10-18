@@ -16,8 +16,6 @@
   <script src="script.js"></script>
 </body>
 </html>
-Utiliza el código con precaución. Más información
-CSS
 nav {
   background-color: #000;
   color: #fff;
@@ -38,8 +36,11 @@ li {
 a {
   text-decoration: none;
 }
-<body bgcolor= "FFFFFF"
-<h1> Microcontrolador ESP32 </h1>
+document.querySelectorAll("nav ul li a").forEach(function(element) {
+  element.addEventListener("click", function() {
+    document.querySelector("nav ul").classList.toggle("open");
+  });
+});
 
 <h3> ¿que es?</h3>
 <h6> El ESP32 es un microcontrolador de 32 bits desarrollado por Espressif Systems. Tiene un procesador dual-core Tensilica Xtensa LX6 con una frecuencia de reloj de hasta 240 MHz, 520 KB de memoria SRAM y 448 KB de memoria ROM.
