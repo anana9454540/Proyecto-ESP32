@@ -1,0 +1,199 @@
+[9:43, 25/10/2023] Corazón De Pelón: Haz un código para ARDUINO para crear un reloj inteligente que muestre la hora, la fecha y el clima con el microcondtrolador Espressif ESP32
+[9:43, 25/10/2023] Corazón De Pelón: Claro, aquí tienes un código para Arduino para crear un reloj inteligente que muestre la hora, la fecha y el clima con el microcontrolador Espressif ESP32:
+
+C++
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET 4
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.display();
+}
+
+void loop() {
+  HTTPClient http;
+  http.begin("https://api.openweathermap.org/data/2.5/weather?q=Buenos+Aires,ar&appid=YOUR_API_KEY");
+  int httpCode = http.GET();
+
+  if (httpCode == 200) {
+    String payload = http.getString();
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, payload);
+
+    const char* weather = doc["weather"][0]["main"].as<const char*>();
+    int temperature = doc["main"]["temp"].as<int>();
+    int humidity = doc["main"]["humidity"].as<int>();
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print(hour());
+    display.print(":");
+    display.print(minute());
+    display.print(":");
+    display.print(second());
+    display.setCursor(0, 10);
+    display.print(day());
+    display.print("-");
+    display.print(month());
+    display.print("-");
+    display.print(year());
+    display.setCursor(0, 20);
+    display.print(weather);
+    display.setCursor(0, 30);
+    display.print(temperature);
+    display.print("°C");
+    display.setCursor(0, 40);
+    display.print(humidity);
+    display.print("%");
+    display.display();
+  } else {
+    Serial.println("HTTP error code: " + String(httpCode));
+  }
+  http.end();
+
+  delay(60000);
+}
+Utiliza el código con precaución. Más información
+Este código funciona de la siguiente manera:
+
+En el setup(), se inicializa la conexión Wi-Fi y la pantalla OLED.
+En el loop(), se realiza una solicitud HTTP a la API de OpenWeatherMap para obtener la información meteorológica actual.
+Si la solicitud es exitosa, se desserializa el JSON de respuesta y se obtiene la información meteorológica relevante.
+Luego, se muestra la hora, la fecha y el clima en la pantalla OLED.
+Para usar este código, deberá reemplazar los siguientes valores:
+
+SSID y PASSWORD con los detalles de su red Wi-Fi.
+YOUR_API_KEY con su clave API de OpenWeatherMap.
+También puede personalizar el código para agregar más funciones, como la capacidad de mostrar notificaciones o controlar dispositivos inteligentes.
+
+Aquí hay algunos ejemplos de cómo personalizar el código:
+
+Para mostrar notificaciones, puede agregar un bucle en el loop() que compruebe si hay nuevas notificaciones. Si hay nuevas notificaciones, puede mostrarlas en la pantalla OLED.
+Para controlar dispositivos inteligentes, puede agregar código para conectarse a un servidor IoT o a un servicio de automatización del hogar. Una vez que esté conectado, puede enviar comandos a los dispositivos inteligentes.
+Espero que esto te ayude a crear tu propio
+
+Fuentes
+github.com/bschulz01/TaskBoard
+github.com/electgpl/Firmware-Electronica
+github.com/johnty/BBQProbe
+www.geothread.net/category/hardware-and-micro-controllers/arduino/
+forum.arduino.cc/t/esp8266-display-library-crashing-display-dispaly/675238
+[9:44, 25/10/2023] Corazón De Pelón: Haz un código para Visual studio CODE para hacer un sensor de temperatura y humedad que envié datos a la nube con el microcondtrolador  Espressif ESP32
+[9:44, 25/10/2023] Corazón De Pelón: Claro, aquí tienes un código para Visual Studio Code para crear un sensor de temperatura y humedad que envíe datos a la nube con el microcontrolador Espressif ESP32:
+
+C++
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+
+#define SEALEVELPRESSURE_HPA 1013.25
+
+Adafruit_BME280 bme;
+
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
+
+const char* host = "api.example.com";
+const char* path = "/sensors/data";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  if (!bme.begin(0x76)) {
+    Serial.println("No se encontró el sensor BME280");
+    while (true);
+  }
+}
+
+void loop() {
+  float temperature = bme.readTemperature();
+  float humidity = bme.readHumidity();
+  float pressure = bme.readPressure() / 100.0F;
+
+  DynamicJsonDocument doc(1024);
+  doc["temperature"] = temperature;
+  doc["humidity"] = humidity;
+  doc["pressure"] = pressure;
+
+  String payload;
+  serializeJson(doc, payload);
+
+  HTTPClient http;
+  http.begin(host + path);
+  http.addHeader("Content-Type", "application/json");
+  int httpCode = http.POST(payload);
+
+  if (httpCode == 200) {
+    Serial.println("Datos enviados correctamente");
+  } else {
+    Serial.println("Error al enviar datos");
+  }
+  http.end();
+
+  delay(60000);
+}
+Utiliza el código con precaución. Más información
+Este código funciona de la siguiente manera:
+
+En el setup(), se inicializa la conexión Wi-Fi y el sensor BME280.
+En el loop(), se leen los datos de temperatura, humedad y presión del sensor BME280.
+Luego, se crea un objeto JSON con los datos leídos.
+Se crea una solicitud HTTP POST al servidor de destino.
+Se envía el objeto JSON al servidor de destino.
+Se verifica el código de respuesta HTTP.
+Si el código de respuesta es 200, se indica que los datos se enviaron correctamente.
+Para usar este código, deberá reemplazar los siguientes valores:
+
+SSID y PASSWORD con los detalles de su red Wi-Fi.
+host y path con la dirección del servidor de destino y la ruta a la que se enviarán los datos.
+También puede personalizar el código para agregar más funciones, como la capacidad de enviar datos a una base de datos o a una plataforma de análisis.
+
+Aquí hay algunos ejemplos de cómo personalizar el código:
+
+Para enviar datos a una base de datos, puede agregar código para conectarse a una base de datos y enviar los datos a una tabla específica.
+Para enviar datos a una plataforma de análisis, puede agregar código para conectarse a una plataforma de análisis y enviar los datos a un punto de datos específico.
+Espero que esto te ayude a crear tu propio sensor de temperatura y humedad.
+
+Fuentes
+github.com/Yacob135/ESP8266_weather_station
+marjun.net/web-scraper-for-arduino-esp8266-esp32/
+github.com/TheCaav/my_light_controller
